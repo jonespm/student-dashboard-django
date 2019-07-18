@@ -40,7 +40,7 @@ while ! nc -z ${MYSQL_HOST} ${MYSQL_PORT}; do
 done
 
 echo Running python startups
-python manage.py migrate
+python3 manage.py migrate
 
 # If these values aren't set or they're set to false
 # This syntax substitutes False if null or unset
@@ -78,7 +78,7 @@ else
         # https://ypereirareis.github.io/blog/2016/02/29/docker-crontab-environment-variables/
         printenv | sed "s/^\([a-zA-Z0-9_]*\)=\(.*\)$/export \1='\2'/g" >> $HOME/.profile
 
-        echo "${CRONTAB_SCHEDULE} . $HOME/.profile; python /code/manage.py runcrons >> /var/log/cron.log 2>&1" | crontab
+        echo "${CRONTAB_SCHEDULE} . $HOME/.profile; python3 /code/manage.py runcrons >> /var/log/cron.log 2>&1" | crontab
         crontab -l && cron -L 15 && tail -f /var/log/cron.log
     fi
 fi

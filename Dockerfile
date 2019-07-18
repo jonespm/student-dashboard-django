@@ -22,19 +22,24 @@ RUN npm prune --production && \
     # This is needed to clean up the examples files as these cause collectstatic to fail (and take up extra space)
     find /usr/src/app/node_modules -type d -name "examples" -print0 | xargs -0 rm -rf
 
-# FROM directive instructing base image to build upon
-FROM python:3.6 AS app
+# This is built with the script ./builddockerbase.sh
+
+FROM python:3.7-alpine as app
 
 # EXPOSE port 5000 to allow communication to/from server
 EXPOSE 5000
 WORKDIR /code
+COPY requirements.txt /code
 
-# NOTE: requirements.txt not likely to change between dev builds
-COPY requirements.txt /code/requirements.txt
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends netcat vim-tiny jq python3-dev xmlsec1 cron && \
-    apt-get clean -y && \
-    pip install -r requirements.txt
+RUN apk add --no-cache python3-dev && \
+    apk add --no-cache --virtual .build-deps g++ postgresql-dev python3-dev build-base gcc libc-dev libffi-dev mariadb-dev && \
+    ln -s /usr/include/locale.h /usr/include/xlocale.h && \
+    pip3 install -r /code/requirements.txt && \
+    apk del .build-deps && \
+    rm -rf .cache/pip && \
+    # Have to add pandas from edge
+    apk add --no-cache --virtual runtime-dependencies py-pandas --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main && \
+    apk add --no-cache --virtual runtime-dependencies py3-numpy vim netcat-openbsd bash git curl mariadb-client postgresql-client xmlsec-dev
 
 # NOTE: project files likely to change between dev builds
 COPY . /code/
