@@ -65,6 +65,7 @@ function ResourcesAccessed (props) {
 
   const [minMaxWeek, setMinMaxWeek] = useState([]) // Should be updated from info
   const [curWeek, setCurWeek] = useState(0) // Should be updated from info
+  const [dateStart, setDateStart] = useState(new Date()) //Should be updated from info 
   const [weekRange, setWeekRange] = useState([]) // Should be depend on curWeek
   const [resourceGradeFilter, setResourceGradeFilter] = useState('') // Should be fetched from default
   const [resourceTypeFilter, setResourceTypeFilter] = useState(resourceTypeLabels)
@@ -151,6 +152,7 @@ function ResourcesAccessed (props) {
     if (courseInfo) {
       const totalWeeks = courseInfo.total_weeks
       const currentWeek = courseInfo.current_week_number
+      setDateStart(courseInfo.date_start)
 
       setMinMaxWeek([1, totalWeeks])
       if (currentWeek > totalWeeks) {
@@ -250,6 +252,7 @@ function ResourcesAccessed (props) {
                     <RangeSlider
                       curWeek={curWeek}
                       className='slider'
+                      dateStart={dateStart}
                       startWeek={weekRange[0]}
                       endWeek={weekRange[1]}
                       min={minMaxWeek[0]}

@@ -22,10 +22,11 @@ const rangeSlider = props => {
 
   const marks = {}
   for (let week = props.min; week <= props.max; week++) {
+    let curDay = new Date(new Date(props.dateStart).getTime() + 604800000 * (week-1)).toLocaleDateString('en-US', {month: 'short', day: 'numeric'})
     if (week === props.curWeek) {
-      marks[week] = `${week} (now)`
+      marks[week] = `${week}:${curDay} (now)`
     } else {
-      marks[week] = `${week}`
+      marks[week] = `${week}:${curDay}`
     }
   }
   return (
